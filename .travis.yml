@@ -1,0 +1,18 @@
+language: python
+dist: trusty
+addons:
+  postgresql: "9.6"
+before_script:
+  - psql -c 'create database stoic_test;' -U postgres
+python:
+  - "3.5"
+cache: pip
+install:
+  - "pip install -r dev-requirements.txt"
+  - "pip install -r requirements.txt"
+  - "python setup.py develop"
+script: 
+  - FLASK_CONFIG=testing py.test --pep8 blog
+  - FLASK_CONFIG=testing py.test -v --cov=blog --cov-report term-missing --pep8 test
+after_success:
+  coveralls
